@@ -248,7 +248,7 @@ jobs:
               -o .cache/github-files/patina-dxe-core-qemu-cargo.toml
           fi
           curl -sfL -H "$AUTH_HEADER" \
-            "https://api.github.com/repos/OpenDevicePartnership/patina-qemu/releases/latest" \
+            "https://api.github.com/repos/cfernald/patina-qemu/releases/latest" \
             -o .cache/github-files/patina-qemu-releases-latest.json
 
       - name: Validate patina-qemu Release Assets
