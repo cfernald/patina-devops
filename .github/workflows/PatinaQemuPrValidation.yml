@@ -133,7 +133,7 @@ jobs:
 
   vars:
     name: Get Constants
-    uses: OpenDevicePartnership/patina-devops/.github/workflows/qemu-constants.yml@main
+    uses: cfernald/patina-devops/.github/workflows/qemu-constants.yml@main
 
   preflight:
     name: Preflight Checks
@@ -174,8 +174,8 @@ jobs:
         id: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          allow-unsafe-pr-checkout: true # Temporary. Tracked in https://github.com/OpenDevicePartnership/patina-devops/issues/166.
-          repository: ${{ inputs.patina-ref != '' && 'OpenDevicePartnership/patina' || 'OpenDevicePartnership/patina-dxe-core-qemu' }}
+          allow-unsafe-pr-checkout: true # Temporary. Tracked in https://github.com/cfernald/patina-devops/issues/166.
+          repository: ${{ inputs.patina-ref != '' && 'cfernald/patina' || 'cfernald/patina-dxe-core-qemu' }}
           ref: ${{ inputs.patina-ref || inputs.dxe-core-qemu-ref }}
 
       # Note: Authorizing requests with the GitHub default token should work since these are pubic
@@ -191,7 +191,7 @@ jobs:
           AUTH_HEADER="Authorization: Bearer $GH_TOKEN"
 
           patina_tag=$(curl -sfL -H "$AUTH_HEADER" \
-            "https://api.github.com/repos/OpenDevicePartnership/patina/releases/latest" \
+            "https://api.github.com/repos/cfernald/patina/releases/latest" \
             | jq -r '.tag_name')
           if [ -z "$patina_tag" ] || [ "$patina_tag" = "null" ]; then
             echo "::error::Failed to retrieve patina latest release tag"
@@ -200,7 +200,7 @@ jobs:
           echo "patina latest release tag: $patina_tag"
 
           qemu_tag=$(curl -sfL -H "$AUTH_HEADER" \
-            "https://api.github.com/repos/OpenDevicePartnership/patina-qemu/releases/latest" \
+            "https://api.github.com/repos/cfernald/patina-qemu/releases/latest" \
             | jq -r '.tag_name')
           if [ -z "$qemu_tag" ] || [ "$qemu_tag" = "null" ]; then
             echo "::error::Failed to retrieve patina-qemu latest release tag"
@@ -210,7 +210,7 @@ jobs:
 
           if [ "$MODE" = "patina" ]; then
             cargo_commit=$(curl -sfL -H "$AUTH_HEADER" \
-              "https://api.github.com/repos/OpenDevicePartnership/patina-dxe-core-qemu/commits?path=Cargo.toml&sha=main&per_page=1" \
+              "https://api.github.com/repos/cfernald/patina-dxe-core-qemu/commits?path=Cargo.toml&sha=main&per_page=1" \
               | jq -r '.[0].sha')
             if [ -z "$cargo_commit" ] || [ "$cargo_commit" = "null" ]; then
               echo "::error::Failed to retrieve patina-dxe-core-qemu Cargo.toml latest commit hash"
@@ -240,11 +240,11 @@ jobs:
           AUTH_HEADER="Authorization: Bearer $GH_TOKEN"
           mkdir -p .cache/github-files
           curl -sfL -H "$AUTH_HEADER" \
-            "https://api.github.com/repos/OpenDevicePartnership/patina/releases/latest" \
+            "https://api.github.com/repos/cfernald/patina/releases/latest" \
             -o .cache/github-files/patina-releases-latest.json
           if [ "$MODE" = "patina" ]; then
             curl -sfL -H "$AUTH_HEADER" \
-              "https://raw.githubusercontent.com/OpenDevicePartnership/patina-dxe-core-qemu/refs/heads/main/Cargo.toml" \
+              "https://raw.githubusercontent.com/cfernald/patina-dxe-core-qemu/refs/heads/main/Cargo.toml" \
               -o .cache/github-files/patina-dxe-core-qemu-cargo.toml
           fi
           curl -sfL -H "$AUTH_HEADER" \
@@ -307,20 +307,20 @@ jobs:
             echo "$sha"
           }
 
-          fw_sha=$(resolve_sha https://github.com/OpenDevicePartnership/patina-fw-patcher.git main)
-          qemu_sha=$(resolve_sha https://github.com/OpenDevicePartnership/patina-qemu.git main)
+          fw_sha=$(resolve_sha https://github.com/cfernald/patina-fw-patcher.git main)
+          qemu_sha=$(resolve_sha https://github.com/cfernald/patina-qemu.git main)
 
           echo "fw_patcher_sha=$fw_sha" >> "$GITHUB_OUTPUT"
           echo "patina_qemu_sha=$qemu_sha" >> "$GITHUB_OUTPUT"
 
           if [ "$MODE" = "patina" ]; then
-            dxe_sha=$(resolve_sha https://github.com/OpenDevicePartnership/patina-dxe-core-qemu.git main)
+            dxe_sha=$(resolve_sha https://github.com/cfernald/patina-dxe-core-qemu.git main)
             echo "dxe_core_qemu_sha=$dxe_sha" >> "$GITHUB_OUTPUT"
             echo "patina_sha=" >> "$GITHUB_OUTPUT"
             echo "Dependency SHAs resolved:"
             echo "  patina-dxe-core-qemu: $dxe_sha"
           else
-            patina_sha=$(resolve_sha https://github.com/OpenDevicePartnership/patina.git main)
+            patina_sha=$(resolve_sha https://github.com/cfernald/patina.git main)
             echo "patina_sha=$patina_sha" >> "$GITHUB_OUTPUT"
             echo "dxe_core_qemu_sha=" >> "$GITHUB_OUTPUT"
             echo "Dependency SHAs resolved:"
@@ -491,7 +491,7 @@ jobs:
         id: checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          repository: ${{ inputs.patina-ref != '' && 'OpenDevicePartnership/patina' || 'OpenDevicePartnership/patina-dxe-core-qemu' }}
+          repository: ${{ inputs.patina-ref != '' && 'cfernald/patina' || 'cfernald/patina-dxe-core-qemu' }}
           ref: ${{ inputs.base-ref }}
           persist-credentials: false
 
@@ -501,7 +501,7 @@ jobs:
         env:
           DXE_REF: ${{ needs.preflight.outputs.dxe_core_qemu_sha }}
         run: |
-          git clone --no-checkout https://github.com/OpenDevicePartnership/patina-dxe-core-qemu.git "$DXE_CORE_QEMU_REPO"
+          git clone --no-checkout https://github.com/cfernald/patina-dxe-core-qemu.git "$DXE_CORE_QEMU_REPO"
           git -C "$DXE_CORE_QEMU_REPO" fetch --depth=1 origin "$DXE_REF"
           git -C "$DXE_CORE_QEMU_REPO" checkout --detach FETCH_HEAD
 
@@ -541,7 +541,7 @@ jobs:
       - name: Build Baseline DEBUG and RELEASE Q35 and ArmVirt
         id: build
         if: steps.compatibility.outputs.compatible == 'true'
-        uses: OpenDevicePartnership/patina-devops/.github/actions/setup-patina-qemu-validation@main
+        uses: cfernald/patina-devops/.github/actions/setup-patina-qemu-validation@main
         with:
           patina-repo: ${{ env.PATINA_REPO }}
           deps-dir: ${{ env.DEPS_DIR }}
@@ -633,8 +633,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          allow-unsafe-pr-checkout: true # Temporary. Tracked in https://github.com/OpenDevicePartnership/patina-devops/issues/166.
-          repository: ${{ inputs.patina-ref != '' && 'OpenDevicePartnership/patina' || 'OpenDevicePartnership/patina-dxe-core-qemu' }}
+          allow-unsafe-pr-checkout: true # Temporary. Tracked in https://github.com/cfernald/patina-devops/issues/166.
+          repository: ${{ inputs.patina-ref != '' && 'cfernald/patina' || 'cfernald/patina-dxe-core-qemu' }}
           ref: ${{ needs.preflight.outputs.checkout_sha }}
 
       # In container jobs, ${{ github.workspace }} resolves to the HOST
@@ -695,7 +695,7 @@ jobs:
         run: unzip -o .cache/patina-qemu/${{ matrix.fw_zip }} -d "$FW_DIR"
 
       - name: Setup and Build patina-dxe-core-qemu
-        uses: OpenDevicePartnership/patina-devops/.github/actions/setup-patina-qemu-validation@main
+        uses: cfernald/patina-devops/.github/actions/setup-patina-qemu-validation@main
         with:
           deps-dir: ${{ env.DEPS_DIR }}
           dxe-core-qemu-ref: ${{ needs.preflight.outputs.dxe_core_qemu_sha }}
@@ -720,7 +720,7 @@ jobs:
           retention-days: 7
 
       - name: Run QEMU Validation - ${{ matrix.platform }} (Linux)
-        uses: OpenDevicePartnership/patina-devops/.github/actions/run-patina-qemu-validation@main
+        uses: cfernald/patina-devops/.github/actions/run-patina-qemu-validation@main
         with:
           fw-patch-repo: ${{ env.FW_PATCHER_REPO }}
           log-file: ${{ env.LOG_DIR }}/${{ matrix.log_file }}
@@ -759,8 +759,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          allow-unsafe-pr-checkout: true # Temporary. Tracked in https://github.com/OpenDevicePartnership/patina-devops/issues/166.
-          repository: ${{ inputs.patina-ref != '' && 'OpenDevicePartnership/patina' || 'OpenDevicePartnership/patina-dxe-core-qemu' }}
+          allow-unsafe-pr-checkout: true # Temporary. Tracked in https://github.com/cfernald/patina-devops/issues/166.
+          repository: ${{ inputs.patina-ref != '' && 'cfernald/patina' || 'cfernald/patina-dxe-core-qemu' }}
           ref: ${{ needs.preflight.outputs.checkout_sha }}
 
       - name: Create Directories
@@ -799,7 +799,7 @@ jobs:
           Expand-Archive -Path .cache\patina-qemu\armvirt.zip -DestinationPath "$env:FW_DIR" -Force
 
       - name: Setup and Build patina-dxe-core-qemu
-        uses: OpenDevicePartnership/patina-devops/.github/actions/setup-patina-qemu-validation@main
+        uses: cfernald/patina-devops/.github/actions/setup-patina-qemu-validation@main
         with:
           deps-dir: ${{ env.DEPS_DIR }}
           dxe-core-qemu-ref: ${{ needs.preflight.outputs.dxe_core_qemu_sha }}
@@ -817,7 +817,7 @@ jobs:
         run: |
           $headers = @{ Authorization = "Bearer $env:GH_TOKEN" }
           $response = Invoke-RestMethod `
-            -Uri "https://api.github.com/repos/OpenDevicePartnership/patina-qemu/commits?path=QemuPkg/Binaries/qemu-windows_ext_dep.yaml&sha=main&per_page=1" `
+            -Uri "https://api.github.com/repos/cfernald/patina-qemu/commits?path=QemuPkg/Binaries/qemu-windows_ext_dep.yaml&sha=main&per_page=1" `
             -Headers $headers
           $commitHash = $response[0].sha
           if (-not $commitHash) {
@@ -843,7 +843,7 @@ jobs:
           $headers = @{ Authorization = "Bearer $env:GH_TOKEN" }
           New-Item -ItemType Directory -Path .cache\github-files -Force | Out-Null
           Invoke-WebRequest `
-            -Uri "https://raw.githubusercontent.com/OpenDevicePartnership/patina-qemu/refs/heads/main/QemuPkg/Binaries/qemu-windows_ext_dep.yaml" `
+            -Uri "https://raw.githubusercontent.com/cfernald/patina-qemu/refs/heads/main/QemuPkg/Binaries/qemu-windows_ext_dep.yaml" `
             -Headers $headers `
             -OutFile ".cache\github-files\qemu-windows_ext_dep.yaml"
 
@@ -894,10 +894,10 @@ jobs:
           "qemu_exec=$exePath" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
 
       # ── Temporarily disabled: Windows Q35 QEMU boot due to QEMU vfat issue on Windows
-      #    - See: https://github.com/OpenDevicePartnership/patina-qemu/issues/188
+      #    - See: https://github.com/cfernald/patina-qemu/issues/188
       - name: Run QEMU Validation - Q35 (Windows)
         if: false
-        uses: OpenDevicePartnership/patina-devops/.github/actions/run-patina-qemu-validation@main
+        uses: cfernald/patina-devops/.github/actions/run-patina-qemu-validation@main
         with:
           fw-patch-repo: ${{ env.FW_PATCHER_REPO }}
           log-file: ${{ env.LOG_DIR }}/q35-windows.log

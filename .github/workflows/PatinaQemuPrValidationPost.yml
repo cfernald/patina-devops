@@ -101,7 +101,7 @@ jobs:
           patina_qemu_sha = deps.get('patina_qemu_sha', '')
           patina_ref = deps.get('patina_ref', data.get('patina_ref', ''))
 
-          gh = 'https://github.com/OpenDevicePartnership'
+          gh = 'https://github.com/cfernald'
           dep_rows = []
           if patina_ref:
               short = patina_ref[:7]
@@ -280,7 +280,7 @@ jobs:
               ...rows,
               ...(mode === 'patina' ? [
                 '',
-                `Shared QEMU integration: ${commit('OpenDevicePartnership/patina-dxe-core-qemu', comparison.integration_sha)}.`,
+                `Shared QEMU integration: ${commit('cfernald/patina-dxe-core-qemu', comparison.integration_sha)}.`,
               ] : []),
               ...[...warnings].map(warning => `\n> ${warning}`),
             ].join('\n'));
@@ -312,7 +312,7 @@ jobs:
               hiddenMarker,
               '## :hourglass: QEMU Validation Skipped - Firmware Assets Not Ready',
               '',
-              'The latest [patina-qemu](https://github.com/OpenDevicePartnership/patina-qemu) release does not yet contain the expected firmware binary zip files.',
+              'The latest [patina-qemu](https://github.com/cfernald/patina-qemu) release does not yet contain the expected firmware binary zip files.',
               'This typically means the release was just created and the asset upload workflow has not finished yet.',
               '',
               'QEMU validation will run automatically on the next trigger once the firmware assets are available.',
@@ -393,7 +393,7 @@ jobs:
 
       - name: Extract Errors from QEMU Logs
         if: steps.download-metadata.outcome == 'success' && steps.metadata.outputs.skipped != 'true' && steps.metadata.outputs.assets_complete != 'false' && steps.metadata.outputs.validation_failed == 'true' && steps.metadata.outputs.readiness_mismatch != 'true'
-        uses: OpenDevicePartnership/patina-devops/.github/actions/extract-build-errors@main
+        uses: cfernald/patina-devops/.github/actions/extract-build-errors@main
         with:
           logs-dir: logs
           output-json: error-map.json
@@ -545,7 +545,7 @@ jobs:
             } else {
               buildFailureHint = [
                 '> **Is this expected?** If the PR introduces breaking changes to patina that',
-                '> require a corresponding update to [patina-dxe-core-qemu](https://github.com/OpenDevicePartnership/patina-dxe-core-qemu),',
+                '> require a corresponding update to [patina-dxe-core-qemu](https://github.com/cfernald/patina-dxe-core-qemu),',
                 '> the build failure is expected.',
                 '> ',
                 '> Contact a repo admin or PR reviewer to override the `Patina QEMU PR Validation` status check.',
